@@ -4,6 +4,7 @@ import psycopg2
 import pandas as pd
 import streamlit as st
 import os
+import re
 from datetime import datetime
 
 # ---------- PAGE CONFIG ----------
@@ -332,6 +333,13 @@ def run_query(query: str,
             port=port
         )
         cursor = conn.cursor()
+             
+        
+        # ---------- FIX: Convert = to ILIKE (Case-Insensitive) ----------
+        query = re.sub(r"=\s*'([^']*)'", r" ILIKE '\1'", query, flags=re.IGNORECASE)
+        # -----------------------------------------------------------------
+        
+        cursor.execute(query)
         cursor.execute(query)
 
         if first_token in {"select", "with"}:
