@@ -14,6 +14,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# ---------- SESSION STATE INITIALIZATION (MUST BE FIRST) ----------
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
 # ---------- AI THEME CUSTOM CSS ----------
 st.markdown("""
 <style>
@@ -370,19 +374,24 @@ with st.sidebar:
     st.markdown('<div class="sidebar-item">📖 About</div>', unsafe_allow_html=True)
     st.markdown("---")
 
-    # Recent Chats (Dynamic)
+    # ---------- RECENT CHATS (WITH SAFETY CHECK) ----------
     st.markdown('<div class="section-label">🕒 Recent Chats</div>', unsafe_allow_html=True)
-    user_questions = [msg for msg in st.session_state.messages if msg["role"] == "user"]
-    if user_questions:
-        for q in reversed(user_questions[-10:]):
-            question_text = q["content"]
-            time = q.get("time", "")
-            st.markdown(f"""
-            <div class="recent-chat-item">
-                {question_text[:45]}{'...' if len(question_text) > 45 else ''}
-                <span class="recent-chat-time">{time}</span>
-            </div>
-            """, unsafe_allow_html=True)
+
+    # Check if messages exists and is not empty
+    if "messages" in st.session_state and st.session_state.messages:
+        user_questions = [msg for msg in st.session_state.messages if msg["role"] == "user"]
+        if user_questions:
+            for q in reversed(user_questions[-10:]):
+                question_text = q["content"]
+                time = q.get("time", "")
+                st.markdown(f"""
+                <div class="recent-chat-item">
+                    {question_text[:45]}{'...' if len(question_text) > 45 else ''}
+                    <span class="recent-chat-time">{time}</span>
+                </div>
+                """, unsafe_allow_html=True)
+        else:
+            st.markdown('<div class="recent-chat-item" style="color:#5A4A7A;">No recent chats</div>', unsafe_allow_html=True)
     else:
         st.markdown('<div class="recent-chat-item" style="color:#5A4A7A;">No recent chats</div>', unsafe_allow_html=True)
 
@@ -400,13 +409,12 @@ with st.sidebar:
 st.markdown('<div class="main-header">🌌 Dynamic AI Assistant</div>', unsafe_allow_html=True)
 st.markdown('<div class="main-subheader">Ask me anything about Students, Marks, or Events. Instant AI insights!</div>', unsafe_allow_html=True)
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
+# Display chat history
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
+# Input
 prompt = st.chat_input("💬 Ask me anything about your college data...")
 
 if prompt:
