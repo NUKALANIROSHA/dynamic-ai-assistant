@@ -276,15 +276,15 @@ def ask_myai(user_inp):
     user_inp = user_inp.lower()
     
     if "information technology" in user_inp or " it" in user_inp:
-        return "SELECT * FROM students WHERE department ILIKE 'Information Technology' LIMIT 5;"
+        return "SELECT * FROM students WHERE department ILIKE 'Information Technology' LIMIT 20;"
     elif "civil" in user_inp:
-        return "SELECT * FROM students WHERE department ILIKE 'Civil Engineering' LIMIT 5;"
+        return "SELECT * FROM students WHERE department ILIKE 'Civil Engineering' LIMIT 20;"
     elif "computer science" in user_inp or "cse" in user_inp or "cs" in user_inp:
-        return "SELECT * FROM students WHERE department ILIKE 'Computer Science' LIMIT 5;"
+        return "SELECT * FROM students WHERE department ILIKE 'Computer Science' LIMIT 20;"
     elif "electronics" in user_inp:
-        return "SELECT * FROM students WHERE department ILIKE 'Electronics' LIMIT 5;"
+        return "SELECT * FROM students WHERE department ILIKE 'Electronics' LIMIT 20;"
     elif "mechanical" in user_inp:
-        return "SELECT * FROM students WHERE department ILIKE 'Mechanical Engineering' LIMIT 5;"
+        return "SELECT * FROM students WHERE department ILIKE 'Mechanical Engineering' LIMIT 20;"
     elif "event" in user_inp:
         return "SELECT * FROM events;"
     elif "mark" in user_inp or "score" in user_inp:
