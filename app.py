@@ -272,30 +272,98 @@ st.markdown("""
 #     except Exception as e:
 #         st.error(f"AI Error: {e}")
 #         return ""
+# def ask_myai(user_inp):
+#     user_inp = user_inp.lower()
+    
+#     # ---------- TOP 5 (Department-wise) ----------
+#     if "top" in user_inp and "civil" in user_inp:
+#         return "SELECT * FROM students WHERE department ILIKE 'Civil Engineering' LIMIT 5;"
+#     elif "top" in user_inp and ("information technology" in user_inp or " it" in user_inp):
+#         return "SELECT * FROM students WHERE department ILIKE 'Information Technology' LIMIT 5;"
+#     elif "top" in user_inp and ("computer science" in user_inp or "cse" in user_inp or "cs" in user_inp):
+#         return "SELECT * FROM students WHERE department ILIKE 'Computer Science' LIMIT 5;"
+#     elif "top" in user_inp and "electronics" in user_inp:
+#         return "SELECT * FROM students WHERE department ILIKE 'Electronics' LIMIT 5;"
+#     elif "top" in user_inp and "mechanical" in user_inp:
+#         return "SELECT * FROM students WHERE department ILIKE 'Mechanical Engineering' LIMIT 5;"
+    
+#     # ---------- TOTAL / COUNT ----------
+#     elif "total" in user_inp or "count" in user_inp or "how many" in user_inp:
+#         return "SELECT COUNT(*) AS total_students FROM students;"
+    
+#     # ---------- ALL STUDENTS ----------
+#     elif "all students" in user_inp or "show all" in user_inp:
+#         return "SELECT * FROM students;"
+    
+#     # ---------- DEPARTMENT-WISE (All) ----------
+#     elif "information technology" in user_inp or " it" in user_inp:
+#         return "SELECT * FROM students WHERE department ILIKE 'Information Technology';"
+#     elif "civil" in user_inp:
+#         return "SELECT * FROM students WHERE department ILIKE 'Civil Engineering';"
+#     elif "computer science" in user_inp or "cse" in user_inp or "cs" in user_inp:
+#         return "SELECT * FROM students WHERE department ILIKE 'Computer Science';"
+#     elif "electronics" in user_inp:
+#         return "SELECT * FROM students WHERE department ILIKE 'Electronics';"
+#     elif "mechanical" in user_inp:
+#         return "SELECT * FROM students WHERE department ILIKE 'Mechanical Engineering';"
+    
+#     # ---------- EVENTS & MARKS ----------
+#     elif "event" in user_inp:
+#         return "SELECT * FROM events;"
+#     elif "mark" in user_inp or "score" in user_inp:
+#         return "SELECT * FROM marks;"
+    
+#     # ---------- DEFAULT ----------
+#     else:
+#         return "SELECT * FROM students;"
 def ask_myai(user_inp):
     user_inp = user_inp.lower()
     
-    # ---------- TOP 5 (Department-wise) ----------
-    if "top" in user_inp and "civil" in user_inp:
+    # ---------- TOTAL / COUNT ----------
+    if "total" in user_inp or "count" in user_inp or "how many" in user_inp:
+        if "civil" in user_inp:
+            return "SELECT COUNT(*) AS total FROM students WHERE department ILIKE 'Civil Engineering';"
+        elif " it" in user_inp or "information technology" in user_inp:
+            return "SELECT COUNT(*) AS total FROM students WHERE department ILIKE 'Information Technology';"
+        elif "computer science" in user_inp or "cse" in user_inp:
+            return "SELECT COUNT(*) AS total FROM students WHERE department ILIKE 'Computer Science';"
+        elif "electronics" in user_inp:
+            return "SELECT COUNT(*) AS total FROM students WHERE department ILIKE 'Electronics';"
+        elif "mechanical" in user_inp:
+            return "SELECT COUNT(*) AS total FROM students WHERE department ILIKE 'Mechanical Engineering';"
+        elif "event" in user_inp:
+            return "SELECT COUNT(*) AS total_events FROM events;"
+        elif "mark" in user_inp or "score" in user_inp:
+            return "SELECT COUNT(*) AS total_marks FROM marks;"
+        else:
+            return "SELECT COUNT(*) AS total_students FROM students;"
+    
+    # ---------- ALL / SHOW ALL ----------
+    elif "all students" in user_inp or "show all" in user_inp:
+        if "event" in user_inp:
+            return "SELECT * FROM events;"
+        elif "mark" in user_inp or "score" in user_inp:
+            return "SELECT * FROM marks;"
+        else:
+            return "SELECT * FROM students;"
+    
+    # ---------- TOP 5 OVERALL ----------
+    elif "top" in user_inp and "overall" in user_inp:
+        return "SELECT s.name, s.department, SUM(m.score) AS total_marks FROM students s JOIN marks m ON s.id = m.student_id GROUP BY s.name, s.department ORDER BY total_marks DESC LIMIT 5;"
+    
+    # ---------- TOP 5 BY DEPARTMENT ----------
+    elif "top" in user_inp and "civil" in user_inp:
         return "SELECT * FROM students WHERE department ILIKE 'Civil Engineering' LIMIT 5;"
     elif "top" in user_inp and ("information technology" in user_inp or " it" in user_inp):
         return "SELECT * FROM students WHERE department ILIKE 'Information Technology' LIMIT 5;"
-    elif "top" in user_inp and ("computer science" in user_inp or "cse" in user_inp or "cs" in user_inp):
+    elif "top" in user_inp and ("computer science" in user_inp or "cse" in user_inp):
         return "SELECT * FROM students WHERE department ILIKE 'Computer Science' LIMIT 5;"
     elif "top" in user_inp and "electronics" in user_inp:
         return "SELECT * FROM students WHERE department ILIKE 'Electronics' LIMIT 5;"
     elif "top" in user_inp and "mechanical" in user_inp:
         return "SELECT * FROM students WHERE department ILIKE 'Mechanical Engineering' LIMIT 5;"
     
-    # ---------- TOTAL / COUNT ----------
-    elif "total" in user_inp or "count" in user_inp or "how many" in user_inp:
-        return "SELECT COUNT(*) AS total_students FROM students;"
-    
-    # ---------- ALL STUDENTS ----------
-    elif "all students" in user_inp or "show all" in user_inp:
-        return "SELECT * FROM students;"
-    
-    # ---------- DEPARTMENT-WISE (All) ----------
+    # ---------- DEPARTMENT-WISE ----------
     elif "information technology" in user_inp or " it" in user_inp:
         return "SELECT * FROM students WHERE department ILIKE 'Information Technology';"
     elif "civil" in user_inp:
@@ -307,11 +375,87 @@ def ask_myai(user_inp):
     elif "mechanical" in user_inp:
         return "SELECT * FROM students WHERE department ILIKE 'Mechanical Engineering';"
     
-    # ---------- EVENTS & MARKS ----------
-    elif "event" in user_inp:
-        return "SELECT * FROM events;"
+    # ---------- YEAR-WISE ----------
+    elif "first year" in user_inp:
+        return "SELECT * FROM students WHERE year = 1;"
+    elif "second year" in user_inp:
+        return "SELECT * FROM students WHERE year = 2;"
+    elif "third year" in user_inp:
+        return "SELECT * FROM students WHERE year = 3;"
+    elif "fourth year" in user_inp:
+        return "SELECT * FROM students WHERE year = 4;"
+    
+    # ---------- NAME SEARCH ----------
+    elif "starts with" in user_inp:
+        letter = user_inp.split("starts with")[1].strip().upper()
+        return f"SELECT * FROM students WHERE name ILIKE '{letter}%';"
+    elif "ends with" in user_inp:
+        word = user_inp.split("ends with")[1].strip()
+        return f"SELECT * FROM students WHERE name ILIKE '%{word}';"
+    elif "contains" in user_inp:
+        word = user_inp.split("contains")[1].strip()
+        return f"SELECT * FROM students WHERE name ILIKE '%{word}%';"
+    
+    # ---------- SORTING ----------
+    elif "sorted by name" in user_inp:
+        return "SELECT * FROM students ORDER BY name;"
+    elif "sorted by department" in user_inp:
+        return "SELECT * FROM students ORDER BY department;"
+    elif "sorted by score" in user_inp:
+        return "SELECT * FROM marks ORDER BY score DESC;"
+    elif "sorted by date" in user_inp:
+        return "SELECT * FROM events ORDER BY date;"
+    
+    # ---------- FIRST / LAST ----------
+    elif "first 10" in user_inp:
+        return "SELECT * FROM students LIMIT 10;"
+    elif "last 10" in user_inp:
+        return "SELECT * FROM students ORDER BY id DESC LIMIT 10;"
+    
+    # ---------- MARKS ----------
+    elif "highest" in user_inp:
+        if "maths" in user_inp:
+            return "SELECT MAX(score) AS highest FROM marks WHERE subject ILIKE 'Maths';"
+        elif "physics" in user_inp:
+            return "SELECT MAX(score) AS highest FROM marks WHERE subject ILIKE 'Physics';"
+        else:
+            return "SELECT MAX(score) AS highest FROM marks;"
+    elif "lowest" in user_inp:
+        return "SELECT MIN(score) AS lowest FROM marks;"
+    elif "average" in user_inp:
+        if "maths" in user_inp:
+            return "SELECT AVG(score) AS average FROM marks WHERE subject ILIKE 'Maths';"
+        elif "physics" in user_inp:
+            return "SELECT AVG(score) AS average FROM marks WHERE subject ILIKE 'Physics';"
+        elif "department" in user_inp:
+            return "SELECT s.department, AVG(m.score) AS avg_score FROM students s JOIN marks m ON s.id = m.student_id GROUP BY s.department;"
+        else:
+            return "SELECT AVG(score) AS average FROM marks;"
+    elif "total score" in user_inp:
+        return "SELECT SUM(score) AS total_score FROM marks;"
+    elif "above 80" in user_inp:
+        return "SELECT s.name, m.score FROM students s JOIN marks m ON s.id = m.student_id WHERE m.score > 80;"
+    elif "below 50" in user_inp:
+        return "SELECT s.name, m.score FROM students s JOIN marks m ON s.id = m.student_id WHERE m.score < 50;"
+    elif "top 3" in user_inp and "maths" in user_inp:
+        return "SELECT * FROM marks WHERE subject ILIKE 'Maths' ORDER BY score DESC LIMIT 3;"
+    elif "maths" in user_inp:
+        return "SELECT * FROM marks WHERE subject ILIKE 'Maths';"
+    elif "physics" in user_inp:
+        return "SELECT * FROM marks WHERE subject ILIKE 'Physics';"
     elif "mark" in user_inp or "score" in user_inp:
         return "SELECT * FROM marks;"
+    
+    # ---------- EVENTS ----------
+    elif "event" in user_inp:
+        if "2025" in user_inp:
+            return "SELECT * FROM events WHERE date >= '2025-01-01';"
+        elif "auditorium" in user_inp:
+            return "SELECT * FROM events WHERE location ILIKE '%Auditorium%';"
+        elif "lab" in user_inp:
+            return "SELECT * FROM events WHERE location ILIKE '%Lab%';"
+        else:
+            return "SELECT * FROM events;"
     
     # ---------- DEFAULT ----------
     else:
