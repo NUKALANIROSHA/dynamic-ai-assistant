@@ -277,22 +277,24 @@ def ask_myai(user_inp):
     
     if "total" in user_inp or "count" in user_inp or "how many" in user_inp:
         return "SELECT COUNT(*) AS total_students FROM students;"
+    elif "all students" in user_inp or "show all" in user_inp:
+        return "SELECT * FROM students;"   # <-- All 100 students
     elif "information technology" in user_inp or " it" in user_inp:
-        return "SELECT * FROM students WHERE department ILIKE 'Information Technology' LIMIT 20;"
+        return "SELECT * FROM students WHERE department ILIKE 'Information Technology';"
     elif "civil" in user_inp:
-        return "SELECT * FROM students WHERE department ILIKE 'Civil Engineering' LIMIT 20;"
+        return "SELECT * FROM students WHERE department ILIKE 'Civil Engineering';"
     elif "computer science" in user_inp or "cse" in user_inp or "cs" in user_inp:
-        return "SELECT * FROM students WHERE department ILIKE 'Computer Science' LIMIT 20;"
+        return "SELECT * FROM students WHERE department ILIKE 'Computer Science';"
     elif "electronics" in user_inp:
-        return "SELECT * FROM students WHERE department ILIKE 'Electronics' LIMIT 20;"
+        return "SELECT * FROM students WHERE department ILIKE 'Electronics';"
     elif "mechanical" in user_inp:
-        return "SELECT * FROM students WHERE department ILIKE 'Mechanical Engineering' LIMIT 20;"
+        return "SELECT * FROM students WHERE department ILIKE 'Mechanical Engineering';"
     elif "event" in user_inp:
         return "SELECT * FROM events;"
     elif "mark" in user_inp or "score" in user_inp:
-        return "SELECT * FROM marks LIMIT 10;"
+        return "SELECT * FROM marks;"
     else:
-        return "SELECT * FROM students LIMIT 10;"
+        return "SELECT * FROM students;"   # <-- Default: all students
 def myai_natural_output(inputq: str, query: str, relevantdata):
     prompt = f"""
         You are an answer-generation tool. Given the user's question, the SQL used, and the relevant DB rows,
