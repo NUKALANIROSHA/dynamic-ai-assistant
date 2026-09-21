@@ -211,68 +211,86 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------- BACKEND FUNCTIONS ----------
+# def ask_myai(user_inp):
+#     query = f"""
+#             You are a private AI that MUST return ONLY valid JSON.
+
+# RULES:
+# 1. Output must be a pure JSON object (no surrounding text, headings, or code fences).
+# 2. NO backticks. NO markdown. NO code fences.
+# 3. JSON format:
+# {{ "query": "<SQL_QUERY>" }}
+# 4. No explanations or extra text. If anything outside the JSON appears, correct yourself and return only the JSON object.
+# 5. Use only the tables and column names from this schema. If the user's request cannot be satisfied by this schema, return an empty SQL string: {{ "query": "" }}
+
+
+# Database Schema:
+
+# students table:
+# - id (INT PRIMARY KEY)
+# - name (TEXT)
+# - department (TEXT)
+# - year (INT)
+# - phone_number (INT)
+
+# marks table:
+# - id (INT PRIMARY KEY)
+# - student_id (INT) → references students.id
+# - subject (TEXT)
+# - score (INT)
+
+# events table:
+# - event_id (INT PRIMARY KEY)
+# - event_name (TEXT)
+# - date (DATE)
+# - location (TEXT)
+
+# First, rewrite the schema in your own understanding (privately).
+# Then use that rewritten understanding to generate the SQL query.
+
+# remember sometimes you will need to consider two or multiple tables together they shall be so dynamic based on the given input
+
+# User Input:
+# {user_inp}
+
+# IMPORTANT: Do NOT wrap the JSON in any code fences. The output must start with {{ and end with }} only.
+# """
+
+#     url = "https://myclassai.myclass189.workers.dev/"
+#     headers = {
+#         "Authorization": "Bearer 12345678",
+#         "Content-Type": "application/json",
+#     }
+#     data = {"prompt": query}
+
+#     try:
+#         response = requests.post(url, headers=headers, json=data)
+#         res = json.loads(response.text)
+#         sec = res['response']
+#         result = sec['query']
+#         return result
+#     except Exception as e:
+#         st.error(f"AI Error: {e}")
+#         return ""
 def ask_myai(user_inp):
-    query = f"""
-            You are a private AI that MUST return ONLY valid JSON.
-
-RULES:
-1. Output must be a pure JSON object (no surrounding text, headings, or code fences).
-2. NO backticks. NO markdown. NO code fences.
-3. JSON format:
-{{ "query": "<SQL_QUERY>" }}
-4. No explanations or extra text. If anything outside the JSON appears, correct yourself and return only the JSON object.
-5. Use only the tables and column names from this schema. If the user's request cannot be satisfied by this schema, return an empty SQL string: {{ "query": "" }}
-
-
-Database Schema:
-
-students table:
-- id (INT PRIMARY KEY)
-- name (TEXT)
-- department (TEXT)
-- year (INT)
-- phone_number (INT)
-
-marks table:
-- id (INT PRIMARY KEY)
-- student_id (INT) → references students.id
-- subject (TEXT)
-- score (INT)
-
-events table:
-- event_id (INT PRIMARY KEY)
-- event_name (TEXT)
-- date (DATE)
-- location (TEXT)
-
-First, rewrite the schema in your own understanding (privately).
-Then use that rewritten understanding to generate the SQL query.
-
-remember sometimes you will need to consider two or multiple tables together they shall be so dynamic based on the given input
-
-User Input:
-{user_inp}
-
-IMPORTANT: Do NOT wrap the JSON in any code fences. The output must start with {{ and end with }} only.
-"""
-
-    url = "https://myclassai.myclass189.workers.dev/"
-    headers = {
-        "Authorization": "Bearer 12345678",
-        "Content-Type": "application/json",
-    }
-    data = {"prompt": query}
-
-    try:
-        response = requests.post(url, headers=headers, json=data)
-        res = json.loads(response.text)
-        sec = res['response']
-        result = sec['query']
-        return result
-    except Exception as e:
-        st.error(f"AI Error: {e}")
-        return ""
-
+    user_inp = user_inp.lower()
+    
+    if "information technology" in user_inp or " it" in user_inp:
+        return "SELECT * FROM students WHERE department ILIKE 'Information Technology' LIMIT 5;"
+    elif "civil" in user_inp:
+        return "SELECT * FROM students WHERE department ILIKE 'Civil Engineering' LIMIT 5;"
+    elif "computer science" in user_inp or "cse" in user_inp or "cs" in user_inp:
+        return "SELECT * FROM students WHERE department ILIKE 'Computer Science' LIMIT 5;"
+    elif "electronics" in user_inp:
+        return "SELECT * FROM students WHERE department ILIKE 'Electronics' LIMIT 5;"
+    elif "mechanical" in user_inp:
+        return "SELECT * FROM students WHERE department ILIKE 'Mechanical Engineering' LIMIT 5;"
+    elif "event" in user_inp:
+        return "SELECT * FROM events;"
+    elif "mark" in user_inp or "score" in user_inp:
+        return "SELECT * FROM marks LIMIT 10;"
+    else:
+        return "SELECT * FROM students LIMIT 10;"
 def myai_natural_output(inputq: str, query: str, relevantdata):
     prompt = f"""
         You are an answer-generation tool. Given the user's question, the SQL used, and the relevant DB rows,
@@ -339,7 +357,6 @@ def run_query(query: str,
         query = re.sub(r"=\s*'([^']*)'", r" ILIKE '\1'", query, flags=re.IGNORECASE)
         # -----------------------------------------------------------------
         
-        cursor.execute(query)
         cursor.execute(query)
 
         if first_token in {"select", "with"}:
