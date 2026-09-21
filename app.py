@@ -275,10 +275,27 @@ st.markdown("""
 def ask_myai(user_inp):
     user_inp = user_inp.lower()
     
-    if "total" in user_inp or "count" in user_inp or "how many" in user_inp:
+    # ---------- TOP 5 (Department-wise) ----------
+    if "top" in user_inp and "civil" in user_inp:
+        return "SELECT * FROM students WHERE department ILIKE 'Civil Engineering' LIMIT 5;"
+    elif "top" in user_inp and ("information technology" in user_inp or " it" in user_inp):
+        return "SELECT * FROM students WHERE department ILIKE 'Information Technology' LIMIT 5;"
+    elif "top" in user_inp and ("computer science" in user_inp or "cse" in user_inp or "cs" in user_inp):
+        return "SELECT * FROM students WHERE department ILIKE 'Computer Science' LIMIT 5;"
+    elif "top" in user_inp and "electronics" in user_inp:
+        return "SELECT * FROM students WHERE department ILIKE 'Electronics' LIMIT 5;"
+    elif "top" in user_inp and "mechanical" in user_inp:
+        return "SELECT * FROM students WHERE department ILIKE 'Mechanical Engineering' LIMIT 5;"
+    
+    # ---------- TOTAL / COUNT ----------
+    elif "total" in user_inp or "count" in user_inp or "how many" in user_inp:
         return "SELECT COUNT(*) AS total_students FROM students;"
+    
+    # ---------- ALL STUDENTS ----------
     elif "all students" in user_inp or "show all" in user_inp:
-        return "SELECT * FROM students;"   # <-- All 100 students
+        return "SELECT * FROM students;"
+    
+    # ---------- DEPARTMENT-WISE (All) ----------
     elif "information technology" in user_inp or " it" in user_inp:
         return "SELECT * FROM students WHERE department ILIKE 'Information Technology';"
     elif "civil" in user_inp:
@@ -289,12 +306,16 @@ def ask_myai(user_inp):
         return "SELECT * FROM students WHERE department ILIKE 'Electronics';"
     elif "mechanical" in user_inp:
         return "SELECT * FROM students WHERE department ILIKE 'Mechanical Engineering';"
+    
+    # ---------- EVENTS & MARKS ----------
     elif "event" in user_inp:
         return "SELECT * FROM events;"
     elif "mark" in user_inp or "score" in user_inp:
         return "SELECT * FROM marks;"
+    
+    # ---------- DEFAULT ----------
     else:
-        return "SELECT * FROM students;"   # <-- Default: all students
+        return "SELECT * FROM students;"
 def myai_natural_output(inputq: str, query: str, relevantdata):
     prompt = f"""
         You are an answer-generation tool. Given the user's question, the SQL used, and the relevant DB rows,
