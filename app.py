@@ -274,8 +274,9 @@ st.markdown("""
 #         return ""
 def ask_myai(user_inp):
     user_inp = user_inp.lower()
-    
-    if "information technology" in user_inp or " it" in user_inp:
+     if "total" in user_inp or "count" in user_inp or "how many" in user_inp:
+        return "SELECT COUNT(*) AS total_students FROM students;"
+    else "information technology" in user_inp or " it" in user_inp:
         return "SELECT * FROM students WHERE department ILIKE 'Information Technology' LIMIT 20;"
     elif "civil" in user_inp:
         return "SELECT * FROM students WHERE department ILIKE 'Civil Engineering' LIMIT 20;"
